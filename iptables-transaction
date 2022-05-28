@@ -1,0 +1,62 @@
+#!/bin/bash
+
+IPTABLESSSAVE=/usr/sbin/iptables-legacy-save
+IPTABLESRESTORE=/usr/sbin/iptables-restore
+TIMEOUT=3
+IPTABLE_TRANSACTION_FILE=/tmp/iptable_transaction_state
+
+
+usage() {
+	echo "Usage: sudo ${0} start|commit"
+	echo "    start - to start a transaction:"
+	echo "        a) to save current state"
+	echo "        b) to start timer for ${TIMEOUT} seconds"
+	echo "    commit - to finish the started transaction"
+	exit 0
+}
+
+do_start() {
+	# 1. check no transaction started
+	# 2. safe IPTABLESSAVE > IPTABLE_TRANSACTION_FILE
+	# 3. start timer
+#	echo *** You have $TIMEOUT seconds to commit the last change
+	echo "TO BE DESIGNED then"
+}
+
+do_commit() {
+	if [ -f $IPTABLE_TRANSACTION_FILE ]; then
+		echo "A started transaction has been committed"
+		rm -rf ${IPTABLE_TRANSACTION_FILE}
+	else
+		echo "No transaction has been started. Use 'start' transaction first."
+	fi
+}
+
+check_who_ami() {
+	isroot=$(whoami | grep  root | wc -l)
+	if [[ $isroot == 0 ]]; then
+		echo "root is needed"
+		exit -1
+	fi
+}
+
+
+if [[ $# != 1 ]]; then
+	usage()
+fi
+
+if [[ "$1" == "start" ]]; then
+	check_who_ami()
+	do_start()
+	exit 0
+fi	
+
+if [[ "$1" == "commit" ]]; then
+	check_who_ami()
+	do_commit()
+	exit 0
+fi
+
+echo ">>Incorrect parameters"
+usage()
+
